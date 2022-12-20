@@ -1,6 +1,5 @@
 package com.kine.springboothibernate.service.impl;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -8,65 +7,63 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.kine.springboothibernate.Repository.EmployeeRepository;
-import com.kine.springboothibernate.entities.Employee;
+import com.kine.springboothibernate.entities.EmployeeEntity;
+import com.kine.springboothibernate.mapper.EmployeeMapper;
+import com.kine.springboothibernate.model.EmployeeDetails;
 import com.kine.springboothibernate.service.EmployeeService;
 
 @Service
-public class EmployeeServiceImpl implements EmployeeService{
-	
+public class EmployeeServiceImpl implements EmployeeService  {
+
 	@Autowired
 	EmployeeRepository employeeRepository;
+	
+	@Autowired
+	EmployeeMapper employeeMapper;
+	
 
-	
-	
-	public List<Employee> getEmployees() {
-		return (List<Employee>) employeeRepository.findAll();
+	public List<EmployeeEntity> getEmployees() {
+		return (List<EmployeeEntity>) employeeRepository.findAll();
 	}
 
-
-	
-	public Employee saveEmployee(Employee employee) {
+	public EmployeeEntity saveEmployee(EmployeeEntity employee) {
 		employeeRepository.save(employee);
 		return employee;
 	}
 
-
-	
-	public void saveEmployees(List<Employee> employee) {
+	public void saveEmployees(List<EmployeeEntity> employee) {
 		employeeRepository.saveAll(employee);
 	}
 
-
-
-	public Optional<Employee> getEmployeesByempid(Long id) {
+	public EmployeeDetails  getEmployeesByempid(Long id) {
 		// TODO Auto-generated method stub
-		return employeeRepository.findById(id);
+		Optional<EmployeeEntity> optional=employeeRepository.findById(id);
+		System.out.println(optional.isPresent());
+		return employeeMapper.toPojo(optional.get());
 	}
-
-
 
 	@Override
 	public void deleteEmployeByempid(Long id) {
 		employeeRepository.deleteById(id);
-		
+
 	}
 
-
-
 	@Override
-	public void updateEmployee(Employee newEmployee, Long id) {
+	public EmployeeEntity updateEmployee(EmployeeDetails employeeDetails) {
+
+		EmployeeEntity employeeEntity=employeeRepository.findByEmail(employeeDetails.email);
+		employeeEntity=employeeMapper.updateEntity(employeeEntity, employeeDetails);
+		System.out.println(employeeEntity.email+"\t"+employeeEntity.firstname+"\t"+employeeEntity.lastname);
 		
-		 employeeRepository.findById(id)
-			   .map(employee->{
-				   employee.setFirstname(newEmployee.getFirstname());
-				   employee.setLastname(newEmployee.getLastname());
-				   employee.setEmail(newEmployee.getEmail());
-				   
-				   return employeeRepository.save(employee);
-			   })
-			   .orElseGet(()->{
-				   return employeeRepository.save(newEmployee);
-			   });
+		employeeRepository.save(employeeEntity);
+		return employeeEntity;
+	}
+
+	public EmployeeDetails getEmployeesByEmail(String email) {
+		// TODO Auto-generated method stub
+		EmployeeEntity employeeEntity= employeeRepository.findByEmail(email);
+		
+		return employeeMapper.toPojo(employeeEntity);
 	}
 
 }

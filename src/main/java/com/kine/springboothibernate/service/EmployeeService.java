@@ -1,23 +1,25 @@
 package com.kine.springboothibernate.service;
 
 import java.util.List;
-import java.util.Optional;
 
-import com.kine.springboothibernate.entities.Employee;
+import com.kine.springboothibernate.entities.EmployeeEntity;
+import com.kine.springboothibernate.model.EmployeeDetails;
 
 public interface EmployeeService{
 	
-	public List<Employee> getEmployees();
+	public List<EmployeeEntity> getEmployees();
 
-	public Employee saveEmployee(Employee employee);
+	public EmployeeEntity saveEmployee(EmployeeEntity employee);
 
-	public void saveEmployees(List<Employee> employee);
+	public void saveEmployees(List<EmployeeEntity> employee);
 
-	public Optional<Employee> getEmployeesByempid(Long id);
+	public EmployeeDetails getEmployeesByempid(Long id);
 
 	public void deleteEmployeByempid(Long id);
 
-	public void updateEmployee(Employee employee, Long id);
+	public EmployeeEntity updateEmployee(EmployeeDetails employee);
+
+	public EmployeeDetails getEmployeesByEmail(String email);
 
 	
 
